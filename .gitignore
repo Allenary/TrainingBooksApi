@@ -1,0 +1,18 @@
+# Compiled source #
+###################
+*.dll
+*.dll.config
+*.pdb
+*.exe
+*.db
+
+#folders#
+#########
+BooksAPI.Test/bin/*
+BooksAPI.Test/obj/*
+BooksAPI/bin/*
+BooksAPI/obj/*
+InvoiceCalculator*
+packages/*
+TestResults/*
+.vs/*

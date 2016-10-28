@@ -14,6 +14,20 @@ namespace BooksAPI.DTOs
         public string Description { get; set; }
         public decimal Price { get; set; }
         public string Author { get; set; }
+
+        public override bool Equals(object obj)
+        {
+            if(obj.GetType() != this.GetType()) return false;
+            var comparedObj = (BookDetailDto)obj;
+            return (this.Id == comparedObj.Id) &&
+                (this.Author == comparedObj.Author) &&
+                (this.Title == comparedObj.Title) &&
+                (this.Genre == comparedObj.Genre) &&
+                (this.PublishDate.Equals(comparedObj.PublishDate)) &&
+                (this.Description == comparedObj.Description) &&
+                (this.Price == comparedObj.Price);
+        }
+
     }
 
     public static class DtoConverter

@@ -78,7 +78,12 @@ namespace BooksAPI.Test
         public async Task GetBooks_ShouldReturnAllBooks_IfBookIdIsNotProvided()
         {
             int expectedBooksCount = GetBooksCount();
-            //TODO: get list of all books in db and compare list from db with what we get from api
+            List<BookDto> allBooks = db.Books.Select(b => new BookDto {
+                Id = b.ExternalId,
+                Author = b.Author.Name,
+                Genre = b.Genre,
+                Title = b.Title
+            }).ToList();
 
             using (var client = NewHttpClient())
             {
@@ -87,7 +92,8 @@ namespace BooksAPI.Test
                 var books = await resp.Content.ReadAsAsync<List<BookDto>>();
 
 
-                Assert.IsTrue(books.Count == expectedBooksCount);
+                Assert.AreEqual(expectedBooksCount, books.Count);
+                CollectionAssert.AreEqual(allBooks, books);
             }
             
         }

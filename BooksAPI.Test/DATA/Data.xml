@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Rows xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:x="urn:Row">
+  <!-- Schema -->
+  <xsd:schema targetNamespace="urn:Row" attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xsd="http://www.w3.org/2001/XMLSchema" >
+    <xsd:element  name="Row">
+      <xsd:complexType>
+        <xsd:sequence>
+          <xsd:element type="xsd:string" name="DateFormat"/>
+          <xsd:element type="xsd:string" name="Message"/>
+        </xsd:sequence>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <!--End Schema-->
+  <x:Row>
+    <x:DateFormat>yyyy-MM-dd</x:DateFormat>
+    <x:Message>dateFormat with dashes</x:Message>
+  </x:Row>
+  <x:Row>
+    <x:DateFormat>yyyy\/MM\/dd</x:DateFormat>
+    <x:Message>dateFormat with slash</x:Message>
+  </x:Row>
+</Rows>

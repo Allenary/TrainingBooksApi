@@ -1,6 +1,5 @@
 ﻿using BooksAPI.Models;
 using System;
-using System.Data.Entity;
 using System.Linq;
 
 namespace BooksAPI.DTOs
@@ -17,7 +16,9 @@ namespace BooksAPI.DTOs
 
         public override bool Equals(object obj)
         {
-            if(obj.GetType() != this.GetType()) return false;
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(obj, this)) return true;
+            if (obj.GetType() != this.GetType()) return false;
             var comparedObj = (BookDetailDto)obj;
             return (this.Id == comparedObj.Id) &&
                 (this.Author == comparedObj.Author) &&
@@ -27,8 +28,14 @@ namespace BooksAPI.DTOs
                 (this.Description == comparedObj.Description) &&
                 (this.Price == comparedObj.Price);
         }
+        public override int GetHashCode()
+        {
+            return this.Id;
+        }
 
     }
+
+    
 
     public static class DtoConverter
     {

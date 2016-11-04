@@ -49,7 +49,26 @@ namespace BooksAPI.Test
                 Assert.AreEqual<BookDto>(BooksConverter.BookDetailToBook(expectedBook), book);
             }
         }
-        
+
+        [TestMethod]
+        public async Task GetBook_ShouldReturnBooks_IfProvidedValidDate()
+        {
+            DateTime date = new DateTime(2011, 10, 20, 12, 55, 53);
+            db.AddNewBookWithAllFields(date, title: "test1");
+            db.AddNewBookWithAllFields(date, title: "test2");
+
+            using (var client = http.NewHttpClient())
+            {
+                var resp = await client.GetAsync("books/date/" + date.ToString("yyyy-MM-dd"));
+                resp.EnsureSuccessStatusCode();
+                var books = await resp.Content.ReadAsAsync<List<BookDto>>();
+                var expectedBooks = db.GetBooksByDate(date);
+
+                Assert.IsTrue(books.Count > 1);
+                CollectionAssert.AreEqual(expectedBooks, books);
+            }
+        }
+
 
         #endregion tests for GET
 
@@ -77,6 +96,7 @@ namespace BooksAPI.Test
             }
         }
 
+        #region tests for PUT
         [TestMethod]
         public async Task PutBook_ShouldUpdateBook_IfBookExistsInDatabase()
         {
@@ -101,6 +121,29 @@ namespace BooksAPI.Test
             }
         }
 
+        [TestMethod]
+        public async Task PutBook_ShouldReturnError_IfProvidedInvalidBookId()
+        {
+            int bookId = db.GetMaxBookExternalId() + 1;
+            BookDetailDto updatedBook = new BookDetailDto
+            {
+                Id = bookId,
+                Author = "Ralls, Kim",
+                Title = "Testing title",
+                Price = 99.9m,
+                Description = "abcde",
+                Genre = "new genre",
+                PublishDate = new DateTime(2016, 9, 20, 10, 10, 10)
+            };
+            using (var client = http.NewHttpClient()) { 
+                var resp = await client.PutAsJsonAsync("books/" + bookId.ToString(), updatedBook);
+                
+                //Not sure this is the best Assertion
+                Assert.AreEqual(System.Net.HttpStatusCode.InternalServerError, resp.StatusCode);
+            }
+
+        }
+        #endregion tests for PUT
 
         #region tests for DELETE
         [TestMethod]

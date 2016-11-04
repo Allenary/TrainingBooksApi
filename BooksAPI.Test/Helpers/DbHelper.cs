@@ -66,9 +66,26 @@ namespace BooksAPI.Test
                         }).First();
             }
             catch (Exception E) { return null; }
-
         }
-        
+
+        public List<BookDto> GetBooksByDate(DateTime date)
+        {
+            try
+            {
+                return (from b in db.Books
+                        join a in db.Authors on b.AuthorId equals a.AuthorId
+                        where b.PublishDate == date
+                        select new BookDto
+                        {
+                            Id = b.ExternalId,
+                            Title = b.Title,
+                            Genre = b.Genre,
+                            Author = b.Author.Name
+                        }).ToList<BookDto>();
+            }
+            catch (Exception E) { return null; }
+        }
+
         public List<BookDto> GetAllBooksInDb()
         {
             return db.Books.Select(b => new BookDto

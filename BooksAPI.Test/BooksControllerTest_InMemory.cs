@@ -57,8 +57,11 @@ namespace BooksAPI.Test
                     resp.EnsureSuccessStatusCode();
                     List<BookDto> actualBooks = await resp.Content.ReadAsAsync<List<BookDto>>();
 
+                    var expectedBooks = db.GetBooksByDate(date);
+
                     Assert.IsTrue(actualBooks.Count > 1);
-            
+                    CollectionAssert.AreEqual(expectedBooks, actualBooks);
+
                 }
             }
         }

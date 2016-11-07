@@ -10,11 +10,11 @@ namespace BooksAPI.Test
     [TestClass]
     public class BooksControllerTest
     {
-        private DbHelper db = new DbHelper();
+        private static DbHelper db = new DbHelper();
         private HttpHelper http = new HttpHelper();
+        static private int firstExternalIdForTests;
 
         #region tests for GET
-
 
         [TestMethod]
         public async Task GetBooks_ShouldReturnAllBooks_IfBookIdIsNotProvided()
@@ -176,6 +176,20 @@ namespace BooksAPI.Test
         }
 
         #endregion tests for DELETE     
+
+        [ClassInitialize]
+        public static void SetUp(TestContext context)
+        {
+            firstExternalIdForTests = db.GetMaxBookExternalId();
+        }
+
+        [ClassCleanup]
+        public static void ClassCleanup()
+        {
+            db.DeleteBooksFromId(firstExternalIdForTests);
+        }
+
+
     }
 
 }

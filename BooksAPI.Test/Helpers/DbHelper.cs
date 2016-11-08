@@ -8,19 +8,21 @@ namespace BooksAPI.Test
 {
     public class DbHelper
     {
-        private BooksAPIContext db;
-        public DbHelper() {
-            db = new BooksAPIContext();
-        }
-        
-        public int GetMaxBookExternalId()
+
+        public int NextBookExternalId()
         {
-            return db.Books.Max(b => b.ExternalId);
+            using (var db = new BooksAPIContext())
+            {
+                return db.Books.Max(b => b.ExternalId) + 1;
+            }
         }
 
         public int GetBooksCount()
         {
-            return db.Books.Count();
+            using (var db = new BooksAPIContext())
+            {
+                return db.Books.Count();
+            }
         }
 
         public BookDetailDto AddNewBookWithAllFields(DateTime publishDate,
@@ -31,7 +33,7 @@ namespace BooksAPI.Test
             string description = "Description"
             )
         {
-            int bookId = GetMaxBookExternalId() + 1;
+            int bookId = NextBookExternalId() + 1;
             BookDetailDto newBook = new BookDetailDto
             {
                 Id = bookId,
@@ -39,17 +41,20 @@ namespace BooksAPI.Test
                 Title = title,
                 Price = 100.1m,
                 Genre = genre,
-                Description = "Description",
+                Description = description,
                 PublishDate = publishDate
             };
-            db.Books.Add(newBook.ToModel());
-            db.SaveChanges();
+            using (var db = new BooksAPIContext())
+            {
+                db.Books.Add(newBook.ToModel());
+                db.SaveChanges();
+            }
             return newBook;
         }
 
         public BookDetailDto GetDetailBookByExternalId(int bookId)
         {
-            try
+            using (var db = new BooksAPIContext())
             {
                 return (from b in db.Books
                         join a in db.Authors on b.AuthorId equals a.AuthorId
@@ -63,14 +68,14 @@ namespace BooksAPI.Test
                             Price = b.Price,
                             Description = b.Description,
                             Author = b.Author.Name
-                        }).First();
+                        }).FirstOrDefault();
             }
-            catch (Exception E) { return null; }
+           
         }
 
         public List<BookDto> GetBooksByDate(DateTime date)
         {
-            try
+            using (var db = new BooksAPIContext())
             {
                 return (from b in db.Books
                         join a in db.Authors on b.AuthorId equals a.AuthorId
@@ -83,25 +88,30 @@ namespace BooksAPI.Test
                             Author = b.Author.Name
                         }).ToList<BookDto>();
             }
-            catch (Exception E) { return null; }
         }
 
         public List<BookDto> GetAllBooksInDb()
         {
-            return db.Books.Select(b => new BookDto
+            using (var db = new BooksAPIContext())
             {
-                Id = b.ExternalId,
-                Author = b.Author.Name,
-                Genre = b.Genre,
-                Title = b.Title
-            }).ToList();
+                return db.Books.Select(b => new BookDto
+                {
+                    Id = b.ExternalId,
+                    Author = b.Author.Name,
+                    Genre = b.Genre,
+                    Title = b.Title
+                }).ToList();
+            }
         }
 
         public void DeleteBooksFromId(int id)
         {
-            var booksToDelete = db.Books.Where(b => b.ExternalId >= id);
-            db.Books.RemoveRange(booksToDelete);
-            db.SaveChanges();
+            using (var db = new BooksAPIContext())
+            {
+                var booksToDelete = db.Books.Where(b => b.ExternalId >= id);
+                db.Books.RemoveRange(booksToDelete);
+                db.SaveChanges();
+            }
         }
     }
 }

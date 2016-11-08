@@ -8,9 +8,8 @@ using System.Threading.Tasks;
 namespace BooksAPI.Test
 {
     [TestClass]
-    public class BooksControllerTest:BookController_BaseTest
+    public class BooksControllerTest:BookControllerTest_Base
     {
-        private HttpHelper http = new HttpHelper();   
 
         #region tests for GET
 
@@ -20,7 +19,7 @@ namespace BooksAPI.Test
             int expectedBooksCount = db.GetBooksCount();
             List<BookDto> allBooks = db.GetAllBooksInDb();
 
-            using (var client = http.NewHttpClient())
+            using (var client = NewHttpClient())
             {
                 var resp = await client.GetAsync("books");
                 resp.EnsureSuccessStatusCode();
@@ -28,6 +27,7 @@ namespace BooksAPI.Test
 
 
                 Assert.AreEqual(expectedBooksCount, books.Count);
+                //TODO: sort
                 CollectionAssert.AreEqual(allBooks, books);
             }
             
@@ -38,7 +38,7 @@ namespace BooksAPI.Test
             BookDetailDto expectedBook = db.AddNewBookWithAllFields(DateTime.Now);
             int expectedBookId = expectedBook.Id;
             
-            using (var client = http.NewHttpClient())
+            using (var client = NewHttpClient())
             {
                 var resp = await client.GetAsync("books/" + expectedBookId);
                 resp.EnsureSuccessStatusCode();
@@ -55,7 +55,7 @@ namespace BooksAPI.Test
             db.AddNewBookWithAllFields(date, title: "test1");
             db.AddNewBookWithAllFields(date, title: "test2");
 
-            using (var client = http.NewHttpClient())
+            using (var client = NewHttpClient())
             {
                 var resp = await client.GetAsync("books/date/" + date.ToString("yyyy-MM-dd"));
                 resp.EnsureSuccessStatusCode();
@@ -73,7 +73,7 @@ namespace BooksAPI.Test
         [TestMethod]
         public async Task PostBook_ShouldCreateNewBookAndReturnItsDto()
         {
-            var book = new BookDetailDto { Id = db.GetMaxBookExternalId() + 1,
+            var book = new BookDetailDto { Id = db.NextBookExternalId(),
                 Author = "Ralls, Kim",
                 Title = "Integration testing",
                 Genre = "Genre",
@@ -83,7 +83,7 @@ namespace BooksAPI.Test
 
             var countBooksBeforeAdd = db.GetBooksCount();
 
-            using (var client = http.NewHttpClient())
+            using (var client = NewHttpClient())
             {
                 var resp = await client.PostAsJsonAsync("books", book);
                 resp.EnsureSuccessStatusCode();
@@ -108,7 +108,7 @@ namespace BooksAPI.Test
                 PublishDate = new DateTime(2016, 9, 20, 10, 10, 10)
             };              
 
-            using (var client = http.NewHttpClient())
+            using (var client = NewHttpClient())
             {
                 var resp = await client.PutAsJsonAsync("books/" + bookId.ToString(), bookToUpdate);
                 resp.EnsureSuccessStatusCode();
@@ -122,7 +122,7 @@ namespace BooksAPI.Test
         [TestMethod]
         public async Task PutBook_ShouldReturnError_IfProvidedInvalidBookId()
         {
-            int bookId = db.GetMaxBookExternalId() + 1;
+            int bookId = db.NextBookExternalId();
             BookDetailDto updatedBook = new BookDetailDto
             {
                 Id = bookId,
@@ -133,7 +133,7 @@ namespace BooksAPI.Test
                 Genre = "new genre",
                 PublishDate = new DateTime(2016, 9, 20, 10, 10, 10)
             };
-            using (var client = http.NewHttpClient()) { 
+            using (var client = NewHttpClient()) { 
                 var resp = await client.PutAsJsonAsync("books/" + bookId.ToString(), updatedBook);
                 
                 //Not sure this is the best Assertion
@@ -150,7 +150,7 @@ namespace BooksAPI.Test
             int bookId = db.AddNewBookWithAllFields(DateTime.Now).Id;
             int countBooksBeforeTest = db.GetBooksCount();
 
-            using (var client = http.NewHttpClient())
+            using (var client = NewHttpClient())
             {
                 var resp = await client.DeleteAsync("books/" + bookId.ToString());
                 resp.EnsureSuccessStatusCode();
@@ -164,8 +164,8 @@ namespace BooksAPI.Test
 
         public async Task DeleteBook_ShouldThrowException_IfProvidedInvalidBookId()
         {
-            int bookId = db.GetMaxBookExternalId() + 1;
-            using (var client = http.NewHttpClient())
+            int bookId = db.NextBookExternalId();
+            using (var client = NewHttpClient())
             {
                 var resp = await client.DeleteAsync("books/" + bookId.ToString());
 

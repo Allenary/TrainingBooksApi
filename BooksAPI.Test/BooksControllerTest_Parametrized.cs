@@ -12,9 +12,8 @@ namespace BooksAPI.Test
     /// Summary description for UnitTest1
     /// </summary>
     [TestClass]
-    public class BooksController_Parametrized : BookController_BaseTest
+    public class BooksController_Parametrized : BookControllerTest_Base
     {
-        private HttpHelper http = new HttpHelper();
         public BooksController_Parametrized()
         {
             //
@@ -74,7 +73,7 @@ namespace BooksAPI.Test
             string dateFormat = TestContext.DataRow[0].ToString();
             string message = TestContext.DataRow[1].ToString();
 
-            using (var client = http.NewHttpClient())
+            using (var client = NewHttpClient())
             {
                 var resp = await client.GetAsync("books/date/" + date.ToString(dateFormat));
                 resp.EnsureSuccessStatusCode();

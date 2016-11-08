@@ -5,14 +5,13 @@ using System.Web.Http;
 using System.Threading.Tasks;
 using System.Net.Http;
 using System.Collections.Generic;
+using System.Net.Http.Headers;
 
 namespace BooksAPI.Test
 {
     [TestClass]
-    public class BooksControllerTest_InMemory: BookController_BaseTest
+    public class BooksControllerTest_InMemory: BookControllerTest_Base
     {
-        private HttpHelper http = new HttpHelper();
-
         [TestMethod]
         public async Task GetBook_ShouldReturnBook_IfProvidedValidBookId()
         {
@@ -26,7 +25,10 @@ namespace BooksAPI.Test
                     config.IncludeErrorDetailPolicy = IncludeErrorDetailPolicy.Always;
                     using (var server = new HttpServer(config))
                     {
-                        var client = http.NewHttpClient();
+                        var client = new HttpClient(server);
+                        client.BaseAddress = new Uri("http://localhost/api/");
+                        client.DefaultRequestHeaders.Accept.Clear();
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                         var resp = await client.GetAsync("books/" + expectedBookId);
                         resp.EnsureSuccessStatusCode();
                         var book = await resp.Content.ReadAsAsync<BookDto>();
@@ -51,7 +53,10 @@ namespace BooksAPI.Test
                 config.IncludeErrorDetailPolicy = IncludeErrorDetailPolicy.Always;
                 using (var server = new HttpServer(config))
                 {
-                    var client = http.NewHttpClient();
+                    var client = new HttpClient(server);
+                    client.BaseAddress = new Uri("http://localhost/api/");
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                     var resp = await client.GetAsync("books/date/"+ date.ToString("yyyy-MM-dd"));
                     resp.EnsureSuccessStatusCode();
                     List<BookDto> actualBooks = await resp.Content.ReadAsAsync<List<BookDto>>();
@@ -74,12 +79,16 @@ namespace BooksAPI.Test
                 config.IncludeErrorDetailPolicy = IncludeErrorDetailPolicy.Always;
                 using (var server = new HttpServer(config))
                 {
-                    var client = http.NewHttpClient();
+                    var client = new HttpClient(server);
+                    client.BaseAddress = new Uri("http://localhost/api/");
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                     var resp = await client.GetAsync("books");
-                    resp.EnsureSuccessStatusCode();
-                    var books = await resp.Content.ReadAsAsync<List<BookDto>>();
+                        resp.EnsureSuccessStatusCode();
+                        var books = await resp.Content.ReadAsAsync<List<BookDto>>();
 
-                    Assert.IsTrue(books.Count > 0);
+                        Assert.IsTrue(books.Count > 0);
+                    
                 }
             }
         }

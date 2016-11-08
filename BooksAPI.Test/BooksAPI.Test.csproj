@@ -109,14 +109,15 @@
     <Compile Include="BooksControllerTest.cs" />
     <Compile Include="Helpers\BooksConverter.cs" />
     <Compile Include="Helpers\DbHelper.cs" />
-    <Compile Include="Helpers\HttpHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="BooksControllerTest_InMemory.cs" />
     <Compile Include="BooksControllerTest_Parametrized.cs" />
-    <Compile Include="BookController_BaseTest.cs" />
+    <Compile Include="BookControllerTest_Base.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

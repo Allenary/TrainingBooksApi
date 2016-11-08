@@ -9,9 +9,8 @@ using System.Collections.Generic;
 namespace BooksAPI.Test
 {
     [TestClass]
-    public class BooksControllerTest_InMemory
+    public class BooksControllerTest_InMemory: BookController_BaseTest
     {
-        private DbHelper db = new DbHelper();
         private HttpHelper http = new HttpHelper();
 
         [TestMethod]

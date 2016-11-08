@@ -8,11 +8,9 @@ using System.Threading.Tasks;
 namespace BooksAPI.Test
 {
     [TestClass]
-    public class BooksControllerTest
+    public class BooksControllerTest:BookController_BaseTest
     {
-        private static DbHelper db = new DbHelper();
-        private HttpHelper http = new HttpHelper();
-        static private int firstExternalIdForTests;
+        private HttpHelper http = new HttpHelper();   
 
         #region tests for GET
 
@@ -176,18 +174,6 @@ namespace BooksAPI.Test
         }
 
         #endregion tests for DELETE     
-
-        [ClassInitialize]
-        public static void SetUp(TestContext context)
-        {
-            firstExternalIdForTests = db.GetMaxBookExternalId();
-        }
-
-        [ClassCleanup]
-        public static void ClassCleanup()
-        {
-            db.DeleteBooksFromId(firstExternalIdForTests);
-        }
 
 
     }

@@ -12,11 +12,10 @@ namespace BooksAPI.Test
     /// Summary description for UnitTest1
     /// </summary>
     [TestClass]
-    public class ParametrizedTest
+    public class BooksController_Parametrized : BookController_BaseTest
     {
-        DbHelper db = new DbHelper();
-        HttpHelper http = new HttpHelper();
-        public ParametrizedTest()
+        private HttpHelper http = new HttpHelper();
+        public BooksController_Parametrized()
         {
             //
             // TODO: Add constructor logic here

@@ -99,7 +99,7 @@ namespace BooksAPI.Test
 
         public void DeleteBooksFromId(int id)
         {
-            var booksToDelete = db.Books.Where(b => b.ExternalId > id);
+            var booksToDelete = db.Books.Where(b => b.ExternalId >= id);
             db.Books.RemoveRange(booksToDelete);
             db.SaveChanges();
         }

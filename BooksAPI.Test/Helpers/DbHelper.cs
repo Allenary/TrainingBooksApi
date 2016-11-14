@@ -3,11 +3,20 @@ using BooksAPI.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 
 namespace BooksAPI.Test
 {
     public class DbHelper
     {
+        private static readonly Expression<Func<Book, BookDto>> AsBookDto =
+           x => new BookDto
+           {
+               Id = x.ExternalId,
+               Title = x.Title,
+               Author = x.Author.Name,
+               Genre = x.Genre
+           };
 
         public int NextBookExternalId()
         {
@@ -94,13 +103,7 @@ namespace BooksAPI.Test
         {
             using (var db = new BooksAPIContext())
             {
-                return db.Books.Select(b => new BookDto
-                {
-                    Id = b.ExternalId,
-                    Author = b.Author.Name,
-                    Genre = b.Genre,
-                    Title = b.Title
-                }).ToList();
+                return db.Books.Select(AsBookDto).ToList();
             }
         }
 

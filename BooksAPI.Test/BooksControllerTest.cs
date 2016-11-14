@@ -25,10 +25,10 @@ namespace BooksAPI.Test
                 resp.EnsureSuccessStatusCode();
                 var books = await resp.Content.ReadAsAsync<List<BookDto>>();
 
-
+                
                 Assert.AreEqual(expectedBooksCount, books.Count);
-                //TODO: sort
-                CollectionAssert.AreEqual(allBooks, books);
+                // order of items doesn't metter
+                CollectionAssert.AreEquivalent(allBooks, books);
             }
             
         }
@@ -63,7 +63,7 @@ namespace BooksAPI.Test
                 var expectedBooks = db.GetBooksByDate(date);
 
                 Assert.IsTrue(books.Count > 1);
-                CollectionAssert.AreEqual(expectedBooks, books);
+                CollectionAssert.AreEquivalent(expectedBooks, books);
             }
         }
 
